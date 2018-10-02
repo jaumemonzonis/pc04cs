@@ -47,7 +47,7 @@ public class Control extends HttpServlet {
 
         int random = (int)Math.round(Math.random() * 10 + 1);
         
-          // validar numerico
+          // validar numerico 2
         try {
            
            num1 = Double.parseDouble(request.getParameter("num1"));
