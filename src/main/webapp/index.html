@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ejercicio Tabla Retardo</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+        
+    </head>      
+   
+    <body>
+       <div class="container">
+            <div class="col-md-6 col-md-offset-3 text-center">
+                <h2 class="bg-info">EJERCICIO TABLA RETARDO</h2>
+                <h4>Introduce los numeros a calcular:</h4>
+                <!--<button type="button" name="enviar" value="Enviar" id="llenar" class="btn btn-success" >Enviar</button>-->
+               
+                    <div id="divAncho" class="form-group">
+                        <label for="ancho">Numero 1</label>
+                        <input id="num1" type="text" class="form-control" name="num1"><!-- required -->
+                        <div id="errorNum1"></div>
+                    </div>	
+                    <div id="divAlto" class="form-group">
+                        <label for="alto">Numero 2</label>
+                        <input id="num2" type="text" class="form-control" name="num2"><!-- required -->
+                        <div id="errorNum2"></div>
+                    </div>
+
+                    <hr>
+
+                    <input id="btn" type="button" class="btn btn-primary" value="Enviar" name="enviar">
+                    <input id="btnl" type="button" class="btn btn-primary" value="Limpiar" name="limpiar">
+
+           
+                <hr>
+                <label for="resultado">Resultado</label>
+                 <div class="table-responsive">
+                <table class="table table-bordered table-hover bg-info" id="tabla">
+ 
+                </table>
+            </div>
+                <div id="errorServidor"></div>
+
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+ 
+               
+                 $('#btn').prop('disabled', true);
+               
+
+
+                // VALIDAR RANGO
+                const min = 0;
+                const max = 100;
+
+                $(document).on('keyup', '#num1', function () {
+                    var self = $(this);
+                    var value = self.val();
+                    if (value < min || value > max) {
+
+                        $("#errorNum1").attr("class", "alert alert-danger");
+                        $("#errorNum1").empty().append("Error!!!. Introduce un numero entre el rango 1 y 100.");
+                        $('#btn').prop('disabled', true);
+                    } else {
+                        $('#btn').prop('disabled', false);
+                    }
+                });
+
+                $(document).on('keyup', '#num2', function () {
+                    var self = $(this);
+                    var value = self.val();
+                    if (value < min || value > max) {
+
+                        $("#errorNum2").attr("class", "alert alert-danger");
+                        $("#errorNum2").empty().append("Error!!!. Introduce un numero entre el rango 1 y 100.");
+                        $('#btn').prop('disabled', true);
+                    } else {
+                        $('#btn').prop('disabled', false);
+                    }
+                });
+
+                $("#num1").keyup(function () {
+                    var initVal = $(this).val();
+                    outputVal = initVal.replace(/[^0-9\.]/g, "").replace(/^\./, "");
+                    if (initVal !== outputVal) {
+                        $(this).val(outputVal);
+                        $("#errorNum1").attr("class", "alert alert-danger");
+                        $("#errorNum1").empty().append("Error. Introduce un numero.");
+                        $('#btn').prop('disabled', true);
+                    } else {
+                        $('#btn').prop('disabled', false);
+                    }
+                });
+
+                $("#num2").keyup(function () {
+                    var initVal = $(this).val();
+                    outputVal = initVal.replace(/[^0-9\.]/g, "").replace(/^\./, "");
+                    if (initVal !== outputVal) {
+                        $(this).val(outputVal);
+                        $("#errorNum2").attr("class", "alert alert-danger");
+                        $("#errorNum2").empty().append("Error. Introduce un numero.");
+                        $('#btn').prop('disabled', true);
+                    } else {
+                        $('#btn').prop('disabled', false);
+                    }
+                });
+
+ 
+ 
+ 
+                $("#btn").click(function () {
+                    $("#errorServidor").attr("class", "");
+                    var num1 = $("#num1").val();
+                    var num2 = $("#num2").val();
+                    $("#tabla").empty();
+                    for (g = 1; g <= num1; g++) {
+                        $("#tabla").append("<tr>");
+                        for (h = 1; h <= num2; h++) {
+                            $("#tabla").append('<td id="a' + g + '-' + h + '"> </td>');
+                        }
+                        $("#tabla").append("</tr>");
+                    }
+ 
+ 
+                    for (p = 1; p <= num1; p++) {
+                        for (o = 1; o <= num2; o++) {
+                            (function (i, j) {
+                                var url = "/p04cs/Control?num1="+i+"&num2="+j;
+                                $.ajax({
+                                    url: url,
+                                    cache: false,
+                                    method: "GET",
+                                    dataType: "json",
+                                    success: function (data) {
+                                        $("#a" + i + "-" + j).append(data);
+                                    },
+                                    error: function (data) {
+                                       var msj = "Mensaje del servidor: " + data.responseJSON.mensaje + "</br> Numero 1: "
+                                    + data.responseJSON.num1 + "</br>Numero 2: " + data.responseJSON.num2;
+                            $("#errorServidor").attr("class", "alert alert-danger");
+                            $("#errorServidor").empty().append(msj);
+                            $("#alerta").empty();
+                                    }
+                                });
+                            })(p,o);
+                        }
+                    }
+ 
+                });
+ 
+                $("#btnl").click(function () {
+                    $("#alerta").empty();
+                
+                    $("#num1").val('');
+                    $("#num2").val('');
+                    $("#errorNum1").attr("class", "");
+                    $("#errorNum2").attr("class", "");
+                    $("#errorNum1").empty();
+                    $("#errorNum2").empty();
+                    $("#errorServidor").empty();
+                    $("#errorServidor").attr("class", "");
+
+                    $("#btn").attr("disabled", true);
+
+ 
+                });
+ 
+            });
+        </script>
+ 
+ 
+    </body>
+</html>
